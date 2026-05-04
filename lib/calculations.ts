@@ -45,20 +45,25 @@ const computeBigFive = (answers: number[]): Record<string, number> => {
   const traits = ["openness", "conscientiousness", "extraversion", "agreeableness", "neuroticism"];
   const out: Record<string, number> = {};
   traits.forEach((t, i) => {
-    const subset = answers.filter((_, idx) => idx % 5 === i);
+    const subset = answers.slice(i * 3, i * 3 + 3);
     const avg = subset.reduce((a, b) => a + b, 0) / subset.length;
     out[t] = Math.round(((avg - 1) / 4) * 100);
   });
   return out;
 };
 
-const computeEnneagram = (answers: number[]): number => {
-  const buckets = new Array(9).fill(0);
-  answers.forEach((ans, idx) => {
-    buckets[idx % 9] += ans;
+// A=Type3, B=Type7, C=Type5, D=Type6, E=Type8, F=Type2, G=Type4
+const letterToType: Record<string, number> = { A: 3, B: 7, C: 5, D: 6, E: 8, F: 2, G: 4 };
+
+const computeEnneagram = (answers: string[]): number => {
+  const tally: Record<number, number> = {};
+  answers.forEach((letter) => {
+    const type = letterToType[letter];
+    if (type) tally[type] = (tally[type] ?? 0) + 1;
   });
-  const max = Math.max(...buckets);
-  return buckets.indexOf(max) + 1;
+  const entries = Object.entries(tally);
+  if (entries.length === 0) return 5;
+  return Number(entries.reduce((a, b) => (b[1] > a[1] ? b : a))[0]);
 };
 
 export const computeLocalResults = (payload: QuizPayload): LocalResults => {

@@ -1,4 +1,4 @@
-const OPENAI_URL = "https://api.openai.com/v1/responses";
+const OPENAI_URL = "https://api.openai.com/v1/chat/completions";
 
 export async function callOpenAI(prompt: string, context: object) {
   const apiKey = process.env.OPENAI_API_KEY;
@@ -11,8 +11,8 @@ export async function callOpenAI(prompt: string, context: object) {
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: "gpt-5",
-      input: [
+      model: "gpt-4o",
+      messages: [
         { role: "system", content: "You are a concise personality analyst." },
         { role: "user", content: `${prompt}\n\nContext:\n${JSON.stringify(context, null, 2)}` },
       ],
@@ -25,5 +25,5 @@ export async function callOpenAI(prompt: string, context: object) {
   }
 
   const json = await response.json();
-  return json.output_text ?? "No output generated.";
+  return json.choices?.[0]?.message?.content ?? "No output generated.";
 }

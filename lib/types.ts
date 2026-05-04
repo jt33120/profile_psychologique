@@ -8,7 +8,7 @@ export type PersonalInfo = {
 
 export type QuizPayload = PersonalInfo & {
   bigFiveAnswers: number[];
-  enneagramAnswers: number[];
+  enneagramAnswers: string[];
 };
 
 export type LocalResults = {
